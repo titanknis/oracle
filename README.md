@@ -34,24 +34,20 @@ This makes connecting to the database easier from your terminal.
     ```
 2.  Create a file named `compose.yml` in this directory with the following content:
 
-    ```yaml
-    services:
-      oracle-db:
-        # For Apple Silicon Macs OR modern systems, use the 21 version
-        image: gvenzl/oracle-xe:21
-
-        # For 64-bit Linux (x64), you can also use the 11 version if needed
-        # image: gvenzl/oracle-xe:11
-
-        container_name: oracle
-        ports:
-          - "1521:1521"
-        environment:
-          - ORACLE_PASSWORD=oracle
-        volumes:
-          # Mounts this folder into the container for file sharing
-          - ./sql_scripts:/workspace
-    ```
+```yaml
+services:
+  oracle-db:
+    # image: gvenzl/oracle-xe:11 # you can optionally choose the 11 version on linux but it is only compatible with arch x64 architecture so its not compatible with apple silicon macos. instead use the 21 version on mac os
+    image: gvenzl/oracle-xe:21 # if on a macos you MUST choose this image instead when the other does not work
+    container_name: oracle
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=oracle
+    volumes:
+      # This volume mounts your local SQL directory into the container
+      - ~/Dev/oracle:/workspace
+```
 
 ---
 
