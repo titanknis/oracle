@@ -79,3 +79,9 @@ sqlplus system/oracle@localhost:1521
 docker exec -it oracle bash
 sqlplus system/oracle
 ```
+
+### **Step 6: Directly Connect to oracle and run sql files in one command**
+
+```bash
+sqlplus system/oracle@localhost:1521 @/PATH/TO/YOUR/SQL/FILE.sql
+```
