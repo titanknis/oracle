@@ -25,6 +25,8 @@ This makes connecting to the database easier from your terminal.
 
 ---
 
+![https://github.com/titanknis/oracle/blob/main](https://raw.githubusercontent.com/titanknis/oracle/refs/heads/main/guide.gif)
+
 ### **Step 3: Project Setup**
 
 1.  Create a directory for the project and navigate into it:
