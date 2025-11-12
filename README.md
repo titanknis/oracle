@@ -39,8 +39,8 @@ This makes connecting to the database easier from your terminal.
 ```yaml
 services:
   oracle-db:
-    # image: gvenzl/oracle-xe:11 # you can optionally choose the 11 version on linux but it is only compatible with arch x64 architecture so its not compatible with apple silicon macos. instead use the 21 version on mac os
-    image: gvenzl/oracle-xe:21 # if on a macos you MUST choose this image instead when the other does not work
+    image: gvenzl/oracle-xe:11 # you can optionally choose the 11 version on linux but it is only compatible with arch x64 architecture so its not compatible with apple silicon macos. instead use the 21 version on mac os
+    # image: gvenzl/oracle-xe:21 # if on a macos you MUST choose this image instead when the other does not work
     container_name: oracle
     ports:
       - "1521:1521"
