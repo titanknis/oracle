@@ -39,26 +39,27 @@ services:
   oracle-ee:
     # image: oracle/database:19.3.0-ee  # Your locally built image
     image: container-registry.oracle.com/database/enterprise:latest
+    platform: linux/amd64  # Force Rosetta 2 emulation
     container_name: oracle-ee
     environment:
-      - ORACLE_PWD=oracle # SYS/SYSTEM password
-      - ORACLE_CHARACTERSET=AL32UTF8 # Unicode support (critical for international apps)
-      - ENABLE_ARCHIVELOG=true # Enable point-in-time recovery (EE feature)
+      - ORACLE_PWD=oracle  # SYS/SYSTEM password
+      - ORACLE_CHARACTERSET=AL32UTF8       # Unicode support (critical for international apps)
+      - ENABLE_ARCHIVELOG=true             # Enable point-in-time recovery (EE feature)
     ports:
-      - "1521:1521" # Default Oracle listener port
-      - "5500:5500" # EM Express web console (Enterprise Manager)
+      - "1521:1521"    # Default Oracle listener port
+      - "5500:5500"    # EM Express web console (Enterprise Manager)
     volumes:
-      - oracle-ee-data:/opt/oracle/oradata # Persistent database files
+      - oracle-ee-data:/opt/oracle/oradata  # Persistent database files
       - oracle-ee-dbdump:/opt/oracle/dpdump # Data Pump export/import directory
-        # This volume mounts your local SQL directory into the container
+#       # This volume mounts your local SQL directory into the container
       - ~/Dev/oracle:/workspace
-    shm_size: 2g # Critical: Oracle needs shared memory >1GB
+    shm_size: 2g        # Critical: Oracle needs shared memory >1GB
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          memory: 8g # EE needs MINIMUM 4GB, 8GB recommended
-          cpus: "2.0" # Minimum 2 CPU cores
+          memory: 8g    # EE needs MINIMUM 4GB, 8GB recommended
+          cpus: '2.0'   # Minimum 2 CPU cores
 
 volumes:
   oracle-ee-data:
