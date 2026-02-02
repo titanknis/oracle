@@ -25,8 +25,6 @@ This makes connecting to the database easier from your terminal.
 
 ---
 
-![https://github.com/titanknis/oracle/blob/main](https://raw.githubusercontent.com/titanknis/oracle/refs/heads/main/guide.gif)
-
 ### **Step 3: Project Setup**
 
 1.  Create a directory for the project and navigate into it:
@@ -38,17 +36,33 @@ This makes connecting to the database easier from your terminal.
 
 ```yaml
 services:
-  oracle-db:
-    image: gvenzl/oracle-xe:11 # you can optionally choose the 11 version on linux but it is only compatible with arch x64 architecture so its not compatible with apple silicon macos. instead use the 21 version on mac os
-    # image: gvenzl/oracle-xe:21 # if on a macos you MUST choose this image instead when the other does not work
-    container_name: oracle
-    ports:
-      - "1521:1521"
+  oracle-ee:
+    # image: oracle/database:19.3.0-ee  # Your locally built image
+    image: container-registry.oracle.com/database/enterprise:latest
+    container_name: oracle-ee
     environment:
-      - ORACLE_PASSWORD=oracle
+      - ORACLE_PWD=oracle # SYS/SYSTEM password
+      - ORACLE_CHARACTERSET=AL32UTF8 # Unicode support (critical for international apps)
+      - ENABLE_ARCHIVELOG=true # Enable point-in-time recovery (EE feature)
+    ports:
+      - "1521:1521" # Default Oracle listener port
+      - "5500:5500" # EM Express web console (Enterprise Manager)
     volumes:
-      # This volume mounts your local SQL directory into the container
+      - oracle-ee-data:/opt/oracle/oradata # Persistent database files
+      - oracle-ee-dbdump:/opt/oracle/dpdump # Data Pump export/import directory
+        # This volume mounts your local SQL directory into the container
       - ~/Dev/oracle:/workspace
+    shm_size: 2g # Critical: Oracle needs shared memory >1GB
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 8g # EE needs MINIMUM 4GB, 8GB recommended
+          cpus: "2.0" # Minimum 2 CPU cores
+
+volumes:
+  oracle-ee-data:
+  oracle-ee-dbdump:
 ```
 
 ---
@@ -65,12 +79,27 @@ docker compose up -d
 
 ---
 
+### wait till database finishes set up
+
+```bash
+docker logs -f oracle-ee
+```
+
+### set up password inside the container
+
+```bash
+docker exec -it oracle-ee bash;
+sqlplus / as sysdba;
+ALTER USER sys IDENTIFIED BY "oracle";
+```
+
 ### **Step 5: Connect to the Database**
 
 **Option A: If you installed SQLPlus (Step 2)**
 
 ```bash
-sqlplus system/oracle@localhost:1521
+# sqlplus system/oracle@localhost:1521/
+sqlplus sys/oracle@//localhost:1521/orclpdb1 as sysdba
 ```
 
 **Option B: Connect from inside the container (always works)**
@@ -78,10 +107,4 @@ sqlplus system/oracle@localhost:1521
 ```bash
 docker exec -it oracle bash
 sqlplus system/oracle
-```
-
-### **Step 6: Directly Connect to oracle and run sql files in one command**
-
-```bash
-sqlplus system/oracle@localhost:1521 @/PATH/TO/YOUR/SQL/FILE.sql
 ```
